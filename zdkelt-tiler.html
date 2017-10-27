@@ -1,0 +1,119 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="zdkelt-tiler">
+  <template>
+    <style>
+       :host {
+        position: relative;
+        display: block;
+        overflow: hidden;
+      }
+
+       ::slotted(zdkelt-tile) {
+        display: block;
+        position: absolute;
+        will-change: transform;
+      }
+
+      #container {
+        box-sizing: border-box;
+        height: 100%;
+        will-change: transform;
+        transition: transform 0.3s ease-in-out;
+        background: magenta;
+      }
+    </style>
+    <div id="container">
+      <slot></slot>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `zdkelt-tiler`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ZdkeltTiler extends Polymer.Element {
+      static get is() {
+        return 'zdkelt-tiler';
+      }
+      static get properties() {
+        return {
+          tilerWidth: {
+            type: Number,
+            value: 50,
+          },
+          tilerHeight: {
+            type: Number,
+            value: 50,
+          },
+          selected: {
+            type: Number,
+            value: 0,
+            observer:'showPage',
+          },
+          _page: {
+            type: Object,
+            value: () => { return {row:0, column:0, margin: 0} },
+          },
+          max: {
+            type: Number,
+            value: 0,
+            reflectToAttribute: true,
+          }
+        };
+
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        this._getNbTilesPerPage();
+        this.render()
+        // this.showPage()
+      }
+
+      _getNbTilesPerPage() {
+        // calculate the number of tiles per page (row and height)
+        const size = this.getBoundingClientRect();
+        this._page.row = Math.floor(size.height / 50)
+        this._page.column = Math.floor(size.width / 60)
+        this._page.margin = (size.width % 60) / 2
+        this._page.width = size.width
+      }
+
+      render() {
+        const tiles = Array.from(this.querySelectorAll('zdkelt-tile'))
+        const tilesPerPage = this._page.row * this._page.column
+        this.max = Math.ceil(tiles.length / tilesPerPage)
+        
+        for (let p = 0; p < this.max; p++) {
+          const tilesInPage = tiles.slice(p * tilesPerPage, (p+1) * tilesPerPage)
+          for (let r = 0; r < this._page.row; r++) {
+            const translateY = r * 50 // height
+            const tilesInRow = tilesInPage.slice(r * this._page.column, (r+1) * this._page.column )
+            tilesInRow.forEach( (tile, indx) => {
+              const translateX = indx * 60 + this._page.margin + p * this._page.width
+              tile.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
+            })
+          }
+        }
+        this.showPage();
+      }
+
+      showPage() {
+        //debugger
+        if (!this.max) return
+        if (this.selected > this.max) this.selected = this.max - 1
+        if (this.selected < 0) this.selected = 0
+        this.$.container.style.transform = `translateX(${this.selected * -this._page.width}px)`
+      }
+
+    }
+
+    window.customElements.define(ZdkeltTiler.is, ZdkeltTiler);
+  </script>
+</dom-module>

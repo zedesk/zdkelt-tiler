@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../polymer/lib/elements/dom-bind.html">
+  <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+  <link rel="import" href="zdkelt-tiler.html">
+
+  <custom-style>
+    <style is="custom-style">
+      zdkelt-tiler {
+        width: 310px;
+        height:190px;
+        background: firebrick;
+      }
+      zdkelt-tile {
+        background: gold;
+        width: 60px;
+        height:50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </custom-style>
+</head>
+<body>
+  <dom-bind>
+    <template>
+      <zdkelt-tiler id="tiler" selected=1>
+        <dom-repeat items='[[items]]'>
+          <template>
+            <zdkelt-tile>[[index]]</zdkelt-tile>
+          </template>
+        </dom-repeat>
+      </zdkelt-tiler>
+    </template>
+  </dom-bind>
+  <script>
+    let autobind = document.querySelector('dom-bind');
+    autobind.items = [...Array(100).keys()]
+    setTimeout(() => {
+      let tiler = document.querySelector('zdkelt-tiler')
+      tiler.render()
+    }, 100)
+  </script>
+</body>
+</html>

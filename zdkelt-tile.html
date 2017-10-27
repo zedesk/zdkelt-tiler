@@ -1,0 +1,30 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="zdkelt-tile">
+  <template>
+    <style>
+      :host {
+        display:inline-flex;
+      }
+    </style>
+    <slot></slot>
+  </template>
+  <script>
+    /**
+     * `zdkelt-tile`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ZdkeltTile extends Polymer.Element {
+      static get is() { return 'zdkelt-tile'; }
+      static get properties() {
+        return {}
+      }
+    }
+
+    window.customElements.define(ZdkeltTile.is, ZdkeltTile);
+  </script>
+</dom-module>
